@@ -1,0 +1,42 @@
+body {
+    color: yellow;
+    background: navy;
+}
+
+p { 
+    margin-left: 5%;
+    margin-right: 5%;
+    line-height: 1.7;
+}
+
+h1 {
+    color: white;
+    font-size: xx-large;
+    text-align: center;
+}
+
+h2 {
+    color: rgb(255, 220, 220);
+    font-size: x-large;
+    margin-left: 5%;
+}
+ 
+li { 
+    background: black;
+    margin-left: 10%;
+    margin-right: 10%;
+}
+
+em {
+    font-weight: bolder; 
+    font-size: large;
+}
+
+strong {
+    font-weight: bolder;
+}
+
+img {
+    display: block;
+    margin: 0 auto;
+}

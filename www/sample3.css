@@ -1,0 +1,91 @@
+/*簡単なスタイルシートの例2*/
+/*マージン指定、属性を縦に書いても同じことの例など*/
+
+/*bodyの背景色と背景画像の繰り返し位置の指定、文字色等の指定*/
+body {
+  color: #000000; /*文字色*/
+  background: #c6daff; /*背景色*/
+  background-repeat: repeat-y; /*背景画像を繰り返し指定*/
+}
+
+/*パラグラフのマージンと行間の指定*/
+p {
+  padding: 5px 5px;
+  margin-top: 5px;
+  margin-left: 10%;
+  margin-right: 10%;
+  line-height: 1.6;
+  color: #000000;
+}
+
+/*見出しの色と文字の大きさ等の指定*/
+H1 {
+  color: #eeeeee;
+  background: #0f3d6f;
+  border-width: 0px 0px 5px 5px;
+  margin-left: 10%;
+  margin-right: 10%;
+  font-size: xx-large;
+  text-align: left;
+  padding: 10px;
+}
+
+H2 {
+  color: #664444;
+  background: #ffffcc;
+  margin-left: 10%;
+  margin-right: 10%;
+  font-size: x-large;
+  text-align: left;
+  padding: 10px;
+}
+
+H3 {
+  margin-left: 10%;
+  margin-right: 10%;
+  font-size: 16pt;
+  text-align: left;
+  padding-top:10px;
+}
+
+/*li要素の背景色とマージン、行間の指定*/
+li {
+  line-height: 1.6;
+  padding: 0px 4px;
+  margin-left: 10%;
+  margin-right: 10%;
+}
+
+/*強調部分のスタイルなどの指定*/
+em {
+  font-weight: bolder;
+  font-size: large;
+}
+
+strong {
+  font-weight: bolder;
+  font-style: italic;
+}
+
+/*水平線の横左マージン指定*/
+hr {
+  margin-left: 10%;
+}
+
+a {
+  color: #27555e;
+}
+
+a:hover {
+  color: #3b8593;
+}
+
+img {
+    display: block;
+    margin: 0 auto;
+}
+
+/*自分でも調べていろいろ付け加えて実験してみよう*/
+/*「見た目」の指定をとても詳しく記述することができます*/
+/*こうした「見た目」の記述はこのcssファイル内で行うことが推奨されます*/
+

@@ -1,0 +1,36 @@
+/*背景色と文字色の指定*/
+body {
+    color: yellow;
+    background: navy
+}
+
+/*パラグラフのマージン(余白)の方向&割合と行間の指定*/
+p {
+    margin-left: 10%;
+    margin-right: 10%;
+    line-height: 1.7
+}
+
+/*見出しの色と文字の大きさ等の指定*/
+H1 {
+    color: white;
+    font-size: xx-large;
+    text-align: center
+}
+
+/*li 要素の背景色とマージン(余白)の方向&割合と行間の指定*/
+li {
+    background: black;
+    margin-left: 5%;
+    margin-right: 5%
+}
+
+/*強調部分のスタイルの指定*/
+em {
+    font-weight: bolder;
+    font-size: large
+}
+
+strong {
+    font-weight: bolder
+}
