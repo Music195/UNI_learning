@@ -130,8 +130,17 @@ class CardGame {
             System.out.println("Player" + (i + 1) + " has joined the game.");
         }
 
+        int get_card = 0;
+        // Check the number of player to ensure they got equal number of cards
+        if ((numPlayers+1) == 3) {
+            get_card = 16;
+        } else {
+            get_card = 12;
+        }
+
+        
         // Generate the cards for the user without 7s
-        String[] my_cards = new String[13];
+        String[] my_cards = new String[get_card];
         for (int i = 0; i < my_cards.length; i++) {
             String card;
             do {
@@ -141,9 +150,9 @@ class CardGame {
         }
 
         // Create an array for each player
-        String[] player1_cards = new String[13];
-        String[] player2_cards = new String[13];
-        String[] player3_cards = new String[13];
+        String[] player1_cards = new String[get_card];
+        String[] player2_cards = new String[get_card];
+        String[] player3_cards = new String[get_card];
 
         // Print the user's cards
         System.out.println("Your cards:");
@@ -153,15 +162,19 @@ class CardGame {
         System.out.println();
 
         // Create an array to keep track of the taken cards
-        java.util.List<String> taken_cards = new java.util.ArrayList<>();
-        for (String card : my_cards) {
-            taken_cards.add(card);
+        String[] taken_cards = new String[52];
+        // Add the user's cards to the taken cards
+        for (int i = 0; i < my_cards.length; i++) {
+            taken_cards[i] = my_cards[i];
         }
 
         // Print the the taken cards
         for (int i = 0; i < taken_cards.length; i++) {
             if (taken_cards[i] != null) {
                 System.out.print("Index " + i + ": " + taken_cards[i] + " ");
+                if ((i + 1) % 6 == 0) {
+                    System.out.println();
+                }
             }
         }
         System.out.println();
