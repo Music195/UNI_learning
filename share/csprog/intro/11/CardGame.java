@@ -1,5 +1,5 @@
-import java.util.Scanner;
 import java.util.Random;
+import java.util.Scanner;
 
 class CardGame {
     public static void main (String args[]) {
@@ -102,9 +102,7 @@ class CardGame {
         String[] remaining_cards = new String[48];
         int index = 0;
         for (int i = 0; i< 52; i++) {
-            if (cards[i%13+2] == '7') {
-                continue;
-            } else {
+            if (cards[i%13+2] != '7') {
                 remaining_cards[index] = suits[i/13] + cards[i%13+2];
                 index++;
             }
@@ -158,14 +156,13 @@ class CardGame {
 
         // Print the user's cards
         System.out.println("Your cards:");
-        for (int i = 0; i < my_cards.length; i++) {
-            System.out.print(my_cards[i] + " ");
+        for (String card : my_cards) {
+            System.out.print(card + " ");
         }
         System.out.println();
         
         // Create an array to keep track of the taken cards
-        String[] taken_cards = new String[48];
-        taken_cards = my_cards; // Add the user's cards to the taken cards
+        String[] taken_cards = my_cards; // Add the user's cards to the taken cards
 
         // Print the the taken cards
         for (int i = 0; i < taken_cards.length; i++) {
@@ -186,20 +183,21 @@ class CardGame {
                     card = suits[rd.nextInt(4)] + cards[rd.nextInt(13)+2];
                 } while (card.charAt(1) == '7' || java.util.Arrays.asList(taken_cards).contains(card)); // Ensure the card is not a 7 and not already taken
                 player_cards[j] = card;
-                taken_cards [taken_cards.length - 1 + j] = card; // Add the card to the taken cards
+                taken_cards.(card); // Add the card to the taken cards
             }
             
-            if (i == 0) {
-                player1_cards = player_cards;
-            } else if (i == 1) {
-                player2_cards = player_cards;
-            } else {
-                player3_cards = player_cards;
+            switch (i) {
+                case 0:
+                    player1_cards = player_cards;
+                case 1:
+                    player2_cards = player_cards;
+                case 2:
+                    player3_cards = player_cards;
             }
 
             System.out.println(players[i] + "'s cards:");
-            for (int j = 0; j < player_cards.length; j++) {
-                System.out.print(player_cards[j] + " ");
+            for ( String card : player_cards) {
+                System.out.print(card + " ");
             }
             System.out.println();
         }
@@ -226,36 +224,28 @@ class CardGame {
 
         // Print the cards for each suit
         for (int i = 0; i < 13; i++) {
-            if (spade_cards[i] == null) { 
-                continue;
-            } else {
+            if (spade_cards[i] != null) { 
                 System.out.print(spade_cards[i] + " ");
             }
         }
         System.out.println();
 
         for (int i = 0; i < 13; i++) {
-            if (heart_cards[i] == null) { 
-                continue;
-            } else {
+            if (heart_cards[i] != null) { 
                 System.out.print(heart_cards[i] + " ");
             }
         }
         System.out.println();
         
         for (int i = 0; i < 13; i++) {
-            if (club_cards[i] == null) { 
-                continue;
-            } else {
+            if (club_cards[i] != null) { 
                 System.out.print(club_cards[i] + " ");
             }
         }
         System.out.println();
 
         for (int i = 0; i < 13; i++) {
-            if (diamond_cards[i] == null) { 
-                continue;
-            } else {
+            if (diamond_cards[i] != null) { 
                 System.out.print(diamond_cards[i] + " ");
             }
         }
