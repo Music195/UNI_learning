@@ -140,9 +140,17 @@ class CardGame {
             System.out.println("Player" + (i + 1) + " has joined the game.");
         }
 
+        int get_card = 0;
+        // Check the number of player to ensure they got equal number of cards
+        if ((numPlayers+1) == 3) {
+            get_card = 16;
+        } else {
+            get_card = 12;
+        }
+
         
         // Generate the cards for the user without 7s
-        String[] my_cards = new String[13];
+        String[] my_cards = new String[get_card];
         for (int i = 0; i < my_cards.length; i++) {
             String card;
             do {
@@ -152,9 +160,9 @@ class CardGame {
         }
         
         // Create an array for each player
-        String[] player1_cards = new String[13];
-        String[] player2_cards = new String[13];
-        String[] player3_cards = new String[13];
+        String[] player1_cards = new String[get_card];
+        String[] player2_cards = new String[get_card];
+        String[] player3_cards = new String[get_card];
 
         // Print the user's cards
         System.out.println("Your cards:");
@@ -164,29 +172,36 @@ class CardGame {
         System.out.println();
         
         // Create an array to keep track of the taken cards
-        String[] taken_cards = new String[48];
-        taken_cards = my_cards; // Add the user's cards to the taken cards
+        String[] taken_cards = new String[52];
+        // Add the user's cards to the taken cards
+        for (int i = 0; i < my_cards.length; i++) {
+            taken_cards[i] = my_cards[i];
+        }
 
         // Print the the taken cards
         for (int i = 0; i < taken_cards.length; i++) {
             if(taken_cards[i] != null) {
                 System.out.print("Index " + i + ": " + taken_cards[i] + " ");
+                if ((i + 1) % 6 == 0) {
+                    System.out.println();
+                }
             }
         }
         System.out.println();
 
 
-        // Generate and printthe cards for the other players without 7s and not overlapping with the user's cards and each other
+        // Generate and print the cards for the other players without 7s and not overlapping with the user's cards and each other
         for (int i = 0; i < players.length; i++) {
             
-            String[] player_cards = new String[13];
+            int current_taken_cards = 13 * (i + 1); // Calculate the current index for taken cards
+            String[] player_cards = new String[get_card];
             for (int j = 0; j < player_cards.length; j++) {
                 String card;
                 do {
                     card = suits[rd.nextInt(4)] + cards[rd.nextInt(13)+2];
                 } while (card.charAt(1) == '7' || java.util.Arrays.asList(taken_cards).contains(card)); // Ensure the card is not a 7 and not already taken
                 player_cards[j] = card;
-                taken_cards [taken_cards.length - 1 + j] = card; // Add the card to the taken cards
+                taken_cards[current_taken_cards + j] = card; // Add the card to the taken cards
             }
             
             if (i == 0) {
