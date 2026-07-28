@@ -1,5 +1,6 @@
 import java.util.Random;
 import java.util.Scanner;
+import java.util.ArrayList;
 
 class CardGame {
     public static void main(String args[]) {
@@ -86,9 +87,13 @@ class CardGame {
     }
 
     public static int shichiNarabe(Scanner sc, Random rd, int money) {
-        // Placeholder for Shichi-Narabe game logic
+
         String[] suits = { "\u2664", "\u2661", "\u2667", "\u2662" };// Spade, Heart, Club, Diamond
         char[] cards = { ' ', ' ', '2', '3', '4', '5', '6', '7', '8', '9', '0', 'J', 'Q', 'K', 'A' };
+
+        // Create an array to keep track of the taken cards
+        String[] taken_cards = new String[52];
+        int taken_count = taken_count(taken_cards);
 
         // Generate all cards without 7s
         String[] remaining_cards = new String[48];
@@ -111,48 +116,47 @@ class CardGame {
         }
         System.out.println();
 
-        // Prompt for the number of players
-        int numPlayers;
-        do {
-            System.out.println("Enter the number of players (3-4): ");
-            numPlayers = sc.nextInt();
-            if (numPlayers < 3 || numPlayers > 4) {
-                System.out.println("Invalid number of players. Please enter a number between 3 and 4.");
-                continue;
-            }
-            break;
-        } while (true);
+        // other players
+        int numPlayers = 2;
 
         // Print the players
-        String[] players = new String[numPlayers - 1];
-        for (int i = 0; i < numPlayers - 1; i++) {
-            players[i] = "Player" + (i + 1);
+        for (int i = 0; i < numPlayers; i++) {
             System.out.println("Player" + (i + 1) + " has joined the game.");
         }
-
-        int get_card = 0;
-        // Check the number of player to ensure they got equal number of cards
-        if ((numPlayers+1) == 3) {
-            get_card = 16;
-        } else {
-            get_card = 12;
+        
+        // Generate the seven desk cards
+        String[] seven_desk = new String[4];
+        for (int i = 0; i < seven_desk.length; i++) {
+            seven_desk[i] = suits[i] + cards[7];
         }
 
+        // Add the seven desk cards to the taken cards
+        for (int i = 0; i < seven_desk.length; i++) {
+            taken_cards[taken_count] = seven_desk[i];
+            taken_count++;
+        }
+        taken_count = taken_count(taken_cards);
+
+        // Create an array for each player
+        String[] my_cards = new String[16];
+        String[] player1_cards = new String[16];
+        String[] player2_cards = new String[16];
         
         // Generate the cards for the user without 7s
-        String[] my_cards = new String[get_card];
         for (int i = 0; i < my_cards.length; i++) {
             String card;
             do {
                 card = suits[rd.nextInt(4)] + cards[rd.nextInt(13) + 2];
-            } while (card.charAt(1) == '7'); // Ensure the card is not a 7
+            } while (java.util.Arrays.asList(taken_cards).contains(card)); // Ensure the card is not already taken
             my_cards[i] = card;
         }
 
-        // Create an array for each player
-        String[] player1_cards = new String[get_card];
-        String[] player2_cards = new String[get_card];
-        String[] player3_cards = new String[get_card];
+        // Add the user's cards to the taken cards
+        for (int i = 0; i < my_cards.length; i++) {
+            taken_cards[taken_count] = my_cards[i];
+            taken_count++;
+        }
+        taken_count = taken_count(taken_cards);
 
         // Print the user's cards
         System.out.println("Your cards:");
@@ -161,36 +165,19 @@ class CardGame {
         }
         System.out.println();
 
-        // Create an array to keep track of the taken cards
-        String[] taken_cards = new String[52];
-        // Add the user's cards to the taken cards
-        for (int i = 0; i < my_cards.length; i++) {
-            taken_cards[i] = my_cards[i];
-        }
-
-        // Print the the taken cards
-        for (int i = 0; i < taken_cards.length; i++) {
-            if (taken_cards[i] != null) {
-                System.out.print("Index " + i + ": " + taken_cards[i] + " ");
-                if ((i + 1) % 6 == 0) {
-                    System.out.println();
-                }
-            }
-        }
-        System.out.println();
-
-        // Generate and printthe cards for the other players without 7s and not
+        // Generate and print the cards for the other players without 7s and not
         // overlapping with the user's cards and each other
-        for (int i = 0; i < players.length; i++) {
+        for (int i = 0; i < numPlayers; i++) {
 
-            String[] player_cards = new String[13];
+            String[] player_cards = new String[16];
             for (int j = 0; j < player_cards.length; j++) {
                 String card;
                 do {
                     card = suits[rd.nextInt(4)] + cards[rd.nextInt(13) + 2];
-                } while (card.charAt(1) == '7' || java.util.Arrays.asList(taken_cards).contains(card)); // Ensure the card is not a 7 and already taken
+                } while (java.util.Arrays.asList(taken_cards).contains(card)); // Ensure the card is not already taken
                 player_cards[j] = card;
-                taken_cards.add(card); // Add the card to the taken cards
+                taken_cards[taken_count] = card; // Add the card to the taken cards
+                taken_count++;
             }
 
             switch (i) {
@@ -198,21 +185,13 @@ class CardGame {
                     player1_cards = player_cards;
                 case 1:
                     player2_cards = player_cards;
-                case 2:
-                    player3_cards = player_cards;
             }
 
-            System.out.println(players[i] + "'s cards:");
+            System.out.println("Player" + (i + 1) + "'s cards:");
             for (String card : player_cards) {
                 System.out.print(card + " ");
             }
             System.out.println();
-        }
-
-        // Generate the seven desk cards
-        String[] seven_desk = new String[4];
-        for (int i = 0; i < seven_desk.length; i++) {
-            seven_desk[i] = suits[i] + cards[7];
         }
 
         // Create arrays for each suit
@@ -221,6 +200,31 @@ class CardGame {
         String[] club_cards = new String[13];
         String[] diamond_cards = new String[13];
 
+        // Check and print for the user to have the card that is next to the seven desk card in each suit
+        ArrayList<String> playable_card = new ArrayList<>();
+
+        System.out.println("Your playable cards:");
+        for (String card : my_cards) {
+            if (card != null && (card.charAt(1) == '8' || card.charAt(1) == '6')) {
+                playable_card.add(card);
+            }
+        }
+
+        for (String pc : playable_card) {
+            System.out.print(pc + " ");
+        }
+        System.out.println();
+
+        // Prompt the user to select a playable card
+        String selected_card;
+        int selected_index;
+        do {
+            System.out.print("Select a playable card index: ");
+            selected_index = sc.nextInt();
+        } while (selected_index < 0 || selected_index >= playable_card.size());
+
+        selected_card = playable_card.get(selected_index);
+
         int mid_num = 13 / 2 + 1;
 
         // Assign the seven desk cards to the middle index of each suit array
@@ -228,35 +232,21 @@ class CardGame {
         heart_cards[mid_num] = seven_desk[1];
         club_cards[mid_num] = seven_desk[2];
         diamond_cards[mid_num] = seven_desk[3];
+        
+
 
         // Print the cards for each suit
-        for (int i = 0; i < 13; i++) {
-            if (spade_cards[i] != null) {
-                System.out.print(spade_cards[i] + " ");
-            }
-        }
-        System.out.println();
+        System.out.println("Spade cards:");
+        print_cards(spade_cards);
 
-        for (int i = 0; i < 13; i++) {
-            if (heart_cards[i] != null) {
-                System.out.print(heart_cards[i] + " ");
-            }
-        }
-        System.out.println();
+        System.out.println("Heart cards:");
+        print_cards(heart_cards);
 
-        for (int i = 0; i < 13; i++) {
-            if (club_cards[i] != null) {
-                System.out.print(club_cards[i] + " ");
-            }
-        }
-        System.out.println();
+        System.out.println("Club cards:");
+        print_cards(club_cards);
 
-        for (int i = 0; i < 13; i++) {
-            if (diamond_cards[i] != null) {
-                System.out.print(diamond_cards[i] + " ");
-            }
-        }
-        System.out.println();
+        System.out.println("Diamond cards:");
+        print_cards(diamond_cards);
 
         return money;
     }
@@ -265,5 +255,24 @@ class CardGame {
         // Placeholder for Shin Ko Mee game logic
         System.out.println("Shin Ko Mee mode is not implemented yet.");
         return money;
+    }
+
+    public static int taken_count(String[] taken_cards) {
+        int count = 0;
+        for (String card : taken_cards) {
+            if (card != null) {
+                count++;
+            }
+        }
+        return count;
+    }
+
+    public static void print_cards(String[] cards) {
+        for (int i = 0; i < 13; i++) {
+            if (cards[i] != null) {
+                System.out.print(cards[i] + " ");
+            }
+        }
+        System.out.println();
     }
 }
