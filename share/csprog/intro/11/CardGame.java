@@ -90,6 +90,12 @@ class CardGame {
 
         String[] suits = { "\u2664", "\u2661", "\u2667", "\u2662" };// Spade, Heart, Club, Diamond
         char[] cards = { ' ', ' ', '2', '3', '4', '5', '6', '7', '8', '9', '0', 'J', 'Q', 'K', 'A' };
+        
+        // Create each suit array
+        String[] ini_spade_cards = create_suit(suits[0], cards);
+        String[] ini_heart_cards = create_suit(suits[1], cards);
+        String[] ini_club_cards = create_suit(suits[2], cards);
+        String[] ini_diamond_cards = create_suit(suits[3], cards);
 
         // Create an array to keep track of the taken cards
         String[] taken_cards = new String[52];
@@ -105,16 +111,6 @@ class CardGame {
             }
 
         }
-
-        // Print the remaining cards
-        System.out.println("Remaining cards (without 7s):");
-        for (int i = 0; i < remaining_cards.length; i++) {
-            System.out.print(remaining_cards[i] + " ");
-            if ((i + 1) % 12 == 0) {
-                System.out.println();
-            }
-        }
-        System.out.println();
 
         // other players
         int numPlayers = 2;
@@ -138,22 +134,22 @@ class CardGame {
         taken_count = taken_count(taken_cards);
 
         // Create an array for each player
-        String[] my_cards = new String[16];
-        String[] player1_cards = new String[16];
-        String[] player2_cards = new String[16];
-        
+        ArrayList<String> my_cards = new ArrayList<>();
+        ArrayList<String> player1_cards = new ArrayList<>();
+        ArrayList<String> player2_cards = new ArrayList<>();
+
         // Generate the cards for the user without 7s
-        for (int i = 0; i < my_cards.length; i++) {
+        for (int i = 0; i < 16; i++) {
             String card;
             do {
                 card = suits[rd.nextInt(4)] + cards[rd.nextInt(13) + 2];
             } while (java.util.Arrays.asList(taken_cards).contains(card)); // Ensure the card is not already taken
-            my_cards[i] = card;
+            my_cards.add(card);
         }
 
         // Add the user's cards to the taken cards
-        for (int i = 0; i < my_cards.length; i++) {
-            taken_cards[taken_count] = my_cards[i];
+        for (int i = 0; i < my_cards.size(); i++) {
+            taken_cards[taken_count] = my_cards.get(i);
             taken_count++;
         }
         taken_count = taken_count(taken_cards);
@@ -169,13 +165,13 @@ class CardGame {
         // overlapping with the user's cards and each other
         for (int i = 0; i < numPlayers; i++) {
 
-            String[] player_cards = new String[16];
-            for (int j = 0; j < player_cards.length; j++) {
+            ArrayList<String> player_cards = new ArrayList<>();
+            for (int j = 0; j < 16; j++) {
                 String card;
                 do {
                     card = suits[rd.nextInt(4)] + cards[rd.nextInt(13) + 2];
                 } while (java.util.Arrays.asList(taken_cards).contains(card)); // Ensure the card is not already taken
-                player_cards[j] = card;
+                player_cards.add(card);
                 taken_cards[taken_count] = card; // Add the card to the taken cards
                 taken_count++;
             }
@@ -194,18 +190,18 @@ class CardGame {
             System.out.println();
         }
 
-        // Create arrays for each suit
-        String[] spade_cards = new String[13];
-        String[] heart_cards = new String[13];
-        String[] club_cards = new String[13];
-        String[] diamond_cards = new String[13];
+        // Check the start and end index of null values in each suit array
+        int[] nspades_index = es_index(spade_cards);
+        int[] nheart_index = es_index(heart_cards);
+        int[] nclub_index = es_index(club_cards);
+        int[] ndiamond_index = es_index(diamond_cards);
 
         // Check and print for the user to have the card that is next to the seven desk card in each suit
         ArrayList<String> playable_card = new ArrayList<>();
 
         System.out.println("Your playable cards:");
         for (String card : my_cards) {
-            if (card != null && (card.charAt(1) == '8' || card.charAt(1) == '6')) {
+            if (card != null && (card.charAt(1) == cards[nspades_index[0] - 1] || card.charAt(1) == cards[nspades_index[1] + 1] || card.charAt(1) < cards[nheart_index[0]] || card.charAt(1) > cards[nheart_index[1]] || card.charAt(1) < cards[nclub_index[0]] || card.charAt(1) > cards[nclub_index[1]] || card.charAt(1) < cards[ndiamond_index[0]] || card.charAt(1) > cards[ndiamond_index[1]])) {
                 playable_card.add(card);
             }
         }
@@ -215,6 +211,19 @@ class CardGame {
         }
         System.out.println();
 
+        int mid_num = get_index(cards, "7") - 2; // Get the index of '7' in the cards array and adjust for suit arrays
+
+        // Create arrays for each suit
+        String[] spade_cards = new String[13];
+        String[] heart_cards = new String[13];
+        String[] club_cards = new String[13];
+        String[] diamond_cards = new String[13];
+
+        // Assign the seven desk cards to the middle index of each suit array
+        spade_cards[mid_num] = seven_desk[0];
+        heart_cards[mid_num] = seven_desk[1];
+        club_cards[mid_num] = seven_desk[2];
+        diamond_cards[mid_num] = seven_desk[3];
         // Prompt the user to select a playable card
         String selected_card;
         int selected_index;
@@ -225,15 +234,27 @@ class CardGame {
 
         selected_card = playable_card.get(selected_index);
 
-        int mid_num = 13 / 2 + 1;
-
-        // Assign the seven desk cards to the middle index of each suit array
-        spade_cards[mid_num] = seven_desk[0];
-        heart_cards[mid_num] = seven_desk[1];
-        club_cards[mid_num] = seven_desk[2];
-        diamond_cards[mid_num] = seven_desk[3];
         
-
+        
+        // Assign the selected card to the appropriate suit array based on its suit
+        if (selected_card.equals(ini_spade_cards[nspades_index[0]])) { // Spade
+            spade_cards[nspades_index[0]] = selected_card;
+        } else if (selected_card.equals(ini_spade_cards[nspades_index[1]])) {
+            spade_cards[nspades_index[1]] = selected_card;
+        }else if (selected_card.equals(ini_heart_cards[nheart_index[0]])) { // Heart
+            heart_cards[nheart_index[0]] = selected_card;
+        } else if (selected_card.equals(ini_heart_cards[nheart_index[1]])) {
+            heart_cards[nheart_index[1]] = selected_card;
+        }else if (selected_card.equals(ini_club_cards[nclub_index[0]])) { // Club
+            club_cards[nclub_index[0]] = selected_card;
+        } else if (selected_card.equals(ini_club_cards[nclub_index[1]])) {
+            club_cards[nclub_index[1]] = selected_card;
+        }else if (selected_card.equals(ini_diamond_cards[ndiamond_index[0]])) { // Diamond
+            diamond_cards[ndiamond_index[0]] = selected_card;
+        } else if (selected_card.equals(ini_diamond_cards[ndiamond_index[1]])) {
+            diamond_cards[ndiamond_index[1]] = selected_card;
+        }
+        my_cards.remove(selected_card); // Remove the selected card from the user's cards
 
         // Print the cards for each suit
         System.out.println("Spade cards:");
@@ -256,7 +277,7 @@ class CardGame {
         System.out.println("Shin Ko Mee mode is not implemented yet.");
         return money;
     }
-
+    // Method to count the number of taken cards
     public static int taken_count(String[] taken_cards) {
         int count = 0;
         for (String card : taken_cards) {
@@ -266,7 +287,7 @@ class CardGame {
         }
         return count;
     }
-
+    // Method to print the cards in a suit
     public static void print_cards(String[] cards) {
         for (int i = 0; i < 13; i++) {
             if (cards[i] != null) {
@@ -274,5 +295,75 @@ class CardGame {
             }
         }
         System.out.println();
+    }
+    // Method to check the start and end index of null values in the suit_cards array
+    public static int[] es_index(String[] suit_cards) {
+        int start = -1, end = -1;
+        // find the start and end index of the suit_cards array
+        for (int i = 0; i < suit_cards.length; i++) {
+            if (suit_cards[i] != null) {
+                start  = i - 1;
+                break;
+            }
+        }
+        for (int i = suit_cards.length - 1; i >= 0; i--) {
+            if (suit_cards[i] != null) {
+                end = i + 1;
+                break;
+            }
+        }
+        //return start and end null index of the suit_cards array
+        return new int[]{start, end};
+    }
+
+    // Method to create each complete suit array
+    public static String[] create_suit(String suit, char[] cards) {
+        String[] suit_cards = new String[13];
+        for (int i = 2; i < cards.length; i++) {
+            suit_cards[i - 2] = suit + cards[i];
+        }
+        return suit_cards;
+    }
+
+    // Method to get index from the value in cards
+    public static int get_index(char[] cards, String value) {
+        for (int i = 0; i < cards.length; i++) {
+            if (String.valueOf(cards[i]).equals(value)) {
+                return i;
+            }
+        }
+        return -1; // Return -1 if the value is not found
+    }
+
+    // Method to check playable cards for the user based on the current state of the suit arrays
+    public static ArrayList<String> get_playable_cards(
+                                                        ArrayList<String> my_cards, 
+                                                        char[] cards, 
+                                                        int[] nspades_index, 
+                                                        int[] nheart_index, 
+                                                        int[] nclub_index, 
+                                                        int[] ndiamond_index
+                                                    ) {
+
+        ArrayList<String> playable_card = new ArrayList<>();
+        for (String card : my_cards) {
+            if (
+                    card != null &&  
+                    (
+                        card.charAt(1) == cards[nspades_index[0] - 1] || 
+                        card.charAt(1) == cards[nspades_index[1] + 1] || 
+                        card.charAt(1) == cards[nheart_index[0] - 1] || 
+                        card.charAt(1) == cards[nheart_index[1] + 1] || 
+                        card.charAt(1) == cards[nclub_index[0] - 1] || 
+                        card.charAt(1) == cards[nclub_index[1] + 1] || 
+                        card.charAt(1) == cards[ndiamond_index[0] - 1] || 
+                        card.charAt(1) == cards[ndiamond_index[1] + 1]
+                    )
+                ) {
+
+                playable_card.add(card);
+            }
+        }
+        return playable_card;
     }
 }
