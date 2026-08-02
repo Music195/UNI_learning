@@ -91,12 +91,6 @@ class CardGame {
         String[] suits = { "\u2664", "\u2661", "\u2667", "\u2662" };// Spade, Heart, Club, Diamond
         char[] cards = { ' ', ' ', '2', '3', '4', '5', '6', '7', '8', '9', '0', 'J', 'Q', 'K', 'A' };
         
-        // Create each suit array
-        String[] ini_spade_cards = create_suit(suits[0], cards);
-        String[] ini_heart_cards = create_suit(suits[1], cards);
-        String[] ini_club_cards = create_suit(suits[2], cards);
-        String[] ini_diamond_cards = create_suit(suits[3], cards);
-
         // Create an array to keep track of the taken cards
         String[] taken_cards = new String[52];
         int taken_count = taken_count(taken_cards);
@@ -133,10 +127,7 @@ class CardGame {
         }
         taken_count = taken_count(taken_cards);
 
-        // Create an array for each player
         ArrayList<String> my_cards = new ArrayList<>();
-        ArrayList<String> player1_cards = new ArrayList<>();
-        ArrayList<String> player2_cards = new ArrayList<>();
 
         // Generate the cards for the user without 7s
         for (int i = 0; i < 16; i++) {
@@ -176,13 +167,6 @@ class CardGame {
                 taken_count++;
             }
 
-            switch (i) {
-                case 0:
-                    player1_cards = player_cards;
-                case 1:
-                    player2_cards = player_cards;
-            }
-
             System.out.println("Player" + (i + 1) + "'s cards:");
             for (String card : player_cards) {
                 System.out.print(card + " ");
@@ -190,30 +174,24 @@ class CardGame {
             System.out.println();
         }
 
-        // Check the start and end index of null values in each suit array
-        int[] nspades_index = es_index(spade_cards);
-        int[] nheart_index = es_index(heart_cards);
-        int[] nclub_index = es_index(club_cards);
-        int[] ndiamond_index = es_index(diamond_cards);
-
-        // Check and print for the user to have the card that is next to the seven desk card in each suit
-        ArrayList<String> playable_card = new ArrayList<>();
+        // Check and print for the user to have the cards next to the seven desk card in each suit
+        ArrayList<String> my_playable_cards = new ArrayList<>();
 
         System.out.println("Your playable cards:");
         for (String card : my_cards) {
-            if (card != null && (card.charAt(1) == cards[nspades_index[0] - 1] || card.charAt(1) == cards[nspades_index[1] + 1] || card.charAt(1) < cards[nheart_index[0]] || card.charAt(1) > cards[nheart_index[1]] || card.charAt(1) < cards[nclub_index[0]] || card.charAt(1) > cards[nclub_index[1]] || card.charAt(1) < cards[ndiamond_index[0]] || card.charAt(1) > cards[ndiamond_index[1]])) {
-                playable_card.add(card);
+            if (card != null && (card.charAt(1) == '6' || card.charAt(1) == '8')) {
+                my_playable_cards.add(card);
             }
         }
 
-        for (String pc : playable_card) {
+        for (String pc : my_playable_cards) {
             System.out.print(pc + " ");
         }
         System.out.println();
 
         int mid_num = get_index(cards, "7") - 2; // Get the index of '7' in the cards array and adjust for suit arrays
 
-        // Create arrays for each suit
+        // Create arrays for each suit to hold the cards played on the table
         String[] spade_cards = new String[13];
         String[] heart_cards = new String[13];
         String[] club_cards = new String[13];
@@ -225,36 +203,22 @@ class CardGame {
         club_cards[mid_num] = seven_desk[2];
         diamond_cards[mid_num] = seven_desk[3];
         // Prompt the user to select a playable card
-        String selected_card;
+        String my_selected_card;
         int selected_index;
         do {
             System.out.print("Select a playable card index: ");
             selected_index = sc.nextInt();
-        } while (selected_index < 0 || selected_index >= playable_card.size());
+        } while (selected_index < 0 || selected_index >= my_playable_cards.size());
 
-        selected_card = playable_card.get(selected_index);
+        my_selected_card = my_playable_cards.get(selected_index);
 
-        
-        
-        // Assign the selected card to the appropriate suit array based on its suit
-        if (selected_card.equals(ini_spade_cards[nspades_index[0]])) { // Spade
-            spade_cards[nspades_index[0]] = selected_card;
-        } else if (selected_card.equals(ini_spade_cards[nspades_index[1]])) {
-            spade_cards[nspades_index[1]] = selected_card;
-        }else if (selected_card.equals(ini_heart_cards[nheart_index[0]])) { // Heart
-            heart_cards[nheart_index[0]] = selected_card;
-        } else if (selected_card.equals(ini_heart_cards[nheart_index[1]])) {
-            heart_cards[nheart_index[1]] = selected_card;
-        }else if (selected_card.equals(ini_club_cards[nclub_index[0]])) { // Club
-            club_cards[nclub_index[0]] = selected_card;
-        } else if (selected_card.equals(ini_club_cards[nclub_index[1]])) {
-            club_cards[nclub_index[1]] = selected_card;
-        }else if (selected_card.equals(ini_diamond_cards[ndiamond_index[0]])) { // Diamond
-            diamond_cards[ndiamond_index[0]] = selected_card;
-        } else if (selected_card.equals(ini_diamond_cards[ndiamond_index[1]])) {
-            diamond_cards[ndiamond_index[1]] = selected_card;
-        }
-        my_cards.remove(selected_card); // Remove the selected card from the user's cards
+            // Assign the selected card to the appropriate suit array based on its suit
+        assign_card_to_suit(my_selected_card, 
+            spade_cards, 
+            heart_cards, 
+            club_cards, 
+            diamond_cards, 
+            my_cards);
 
         // Print the cards for each suit
         System.out.println("Spade cards:");
@@ -336,34 +300,36 @@ class CardGame {
     }
 
     // Method to check playable cards for the user based on the current state of the suit arrays
-    public static ArrayList<String> get_playable_cards(
-                                                        ArrayList<String> my_cards, 
-                                                        char[] cards, 
-                                                        int[] nspades_index, 
-                                                        int[] nheart_index, 
-                                                        int[] nclub_index, 
-                                                        int[] ndiamond_index
-                                                    ) {
-
+    public static ArrayList<String> get_playable_cards(ArrayList<String> my_cards) {
         ArrayList<String> playable_card = new ArrayList<>();
         for (String card : my_cards) {
-            if (
-                    card != null &&  
-                    (
-                        card.charAt(1) == cards[nspades_index[0] - 1] || 
-                        card.charAt(1) == cards[nspades_index[1] + 1] || 
-                        card.charAt(1) == cards[nheart_index[0] - 1] || 
-                        card.charAt(1) == cards[nheart_index[1] + 1] || 
-                        card.charAt(1) == cards[nclub_index[0] - 1] || 
-                        card.charAt(1) == cards[nclub_index[1] + 1] || 
-                        card.charAt(1) == cards[ndiamond_index[0] - 1] || 
-                        card.charAt(1) == cards[ndiamond_index[1] + 1]
-                    )
-                ) {
-
+            if (card != null && (card.charAt(1) == '6' || card.charAt(1) == '8')) {
                 playable_card.add(card);
             }
         }
         return playable_card;
+    }
+
+    // Method to assign the selected card to the appropriate suit array based on its suit and remove it from the user's cards
+    public static void assign_card_to_suit(
+                                            String selected_card,
+                                            String[] spade_cards,
+                                            String[] heart_cards,
+                                            String[] club_cards,
+                                            String[] diamond_cards,
+                                            ArrayList<String> my_cards
+                                        ) {
+        int card_index = selected_card.charAt(1) - '2';
+
+        if (selected_card.charAt(0) == '\u2664') { // Spade
+            spade_cards[card_index] = selected_card;
+        } else if (selected_card.charAt(0) == '\u2661') { // Heart
+            heart_cards[card_index] = selected_card;
+        } else if (selected_card.charAt(0) == '\u2667') { // Club
+            club_cards[card_index] = selected_card;
+        } else if (selected_card.charAt(0) == '\u2662') { // Diamond
+            diamond_cards[card_index] = selected_card;
+        }
+        my_cards.remove(selected_card); // Remove the selected card from the user's cards
     }
 }
