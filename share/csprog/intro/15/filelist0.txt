@@ -1,0 +1,5 @@
+foo.png
+fuga.png
+hoge.png
+test.png
+tmp.png
